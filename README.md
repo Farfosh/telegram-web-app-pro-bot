@@ -20,7 +20,7 @@
 git init
 git add .
 git commit -m "TG Data Inspector"
-git remote add origin https://github.com/username/tg-inspector.git
+git remote add origin https://github.com/Farfosh/telegram-web-app-pro-bot.git
 git push -u origin main
 
 # Then: GitHub → Settings → Pages → Source: main → Save
@@ -247,10 +247,89 @@ function verifyTelegramData(initData, botToken) {
 }
 ```
 
+## 🧪 Testing & Debug Mode
+
+### Using Telegram Test Environment
+
+To test your Mini App without affecting production:
+
+**iOS:**
+- Tap 10 times on Settings icon → Accounts → Login to another account → Test
+
+**Telegram Desktop:**
+- Open Settings → Shift + Alt + Right click "Add Account" → Select "Test Server"
+
+**macOS:**
+- Click Settings icon 10 times → ⌘ + click "Add Account" → Log in
+
+> **Note:** Test environment is separate - you need a new user account and bot via @BotFather. You can use HTTP links (without TLS) in test mode.
+
+### Debug Mode for Mini Apps
+
+**iOS:**
+1. Tap 10 times on Settings → Toggle "Allow Web View Inspection"
+2. Connect iPhone to Mac via USB
+3. Open Safari → Develop → [Your Device Name]
+4. Launch Mini App on iOS - it appears in Develop menu
+
+**Android:**
+1. Enable USB-Debugging on device
+2. In Telegram Settings, scroll down, press and hold version number twice
+3. Choose "Enable WebView Debug"
+4. Connect to computer → Open `chrome://inspect/#devices` in Chrome
+5. Launch Mini App - it will appear for inspection
+
+**Telegram Desktop (Windows/Linux):**
+1. Download Beta Version
+2. Settings → Advanced → Experimental → Enable webview inspection
+3. Right click in WebView → Choose "Inspect"
+
+**Telegram macOS:**
+1. Download Beta Version
+2. Click 5 times on Settings icon → Enable "Debug Mini Apps"
+3. Right click in Mini App → Choose "Inspect Element"
+
+---
+
+## 🆕 Latest Telegram API Updates
+
+This app supports the latest Telegram WebApp API features:
+
+### Bot API 9.1 (July 2025)
+- ✅ **hideKeyboard()** - Hide virtual keyboard
+
+### Bot API 9.0 (April 2025)
+- ✅ **DeviceStorage** - Persistent local storage *(removed in this app - uses CloudStorage instead)*
+- ✅ **SecureStorage** - Encrypted local storage for sensitive data
+
+### Bot API 8.0 (November 2024) - **Largest Update Ever**
+- ✅ **Full-screen Mode** - requestFullscreen(), exitFullscreen()
+- ✅ **Safe Area Insets** - safeAreaInset, contentSafeAreaInset
+- ✅ **Homescreen Shortcuts** - addToHomeScreen(), checkHomeScreenStatus()
+- ✅ **Emoji Status** - setEmojiStatus(), requestEmojiStatusAccess()
+- ✅ **Media Sharing** - shareMessage(), downloadFile()
+- ✅ **Geolocation** - LocationManager for GPS access
+- ✅ **Device Motion** - Accelerometer, Gyroscope, DeviceOrientation
+- ✅ **Orientation Lock** - lockOrientation(), unlockOrientation()
+- ✅ **Subscription Plans** - Paid subscriptions with Telegram Stars
+- ✅ **Loading Screen Customization** - Custom icons and colors
+
+### Bot API 7.10 (September 2024)
+- ✅ **SecondaryButton** - Second bottom button
+- ✅ **Bottom Bar Color** - setBottomBarColor()
+
+### Bot API 7.8 (July 2024)
+- ✅ **Share to Story** - shareToStory() method
+
+[See full changelog on Telegram Docs](https://core.telegram.org/bots/webapps#recent-changes)
+
+---
+
 ## 📚 References
 
 - [Telegram WebApp API Documentation](https://core.telegram.org/bots/webapps)
 - [Telegram Bot API](https://core.telegram.org/bots/api)
+- [Testing Mini Apps Guide](https://core.telegram.org/bots/webapps#testing-mini-apps)
 
 ## 🌟 Key Features Summary
 
