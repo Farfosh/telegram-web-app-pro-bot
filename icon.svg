@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background Circle -->
+  <circle cx="256" cy="256" r="240" fill="url(#grad1)"/>
+  
+  <!-- Magnifying Glass Handle -->
+  <rect x="340" y="340" width="80" height="140" rx="40" fill="#ffffff" transform="rotate(45 380 410)"/>
+  
+  <!-- Magnifying Glass Circle -->
+  <circle cx="240" cy="200" r="120" fill="none" stroke="#ffffff" stroke-width="24"/>
+  
+  <!-- Data Symbols inside -->
+  <text x="240" y="180" font-family="monospace" font-size="48" fill="#ffffff" text-anchor="middle" font-weight="bold">&lt;/&gt;</text>
+  <circle cx="200" cy="230" r="8" fill="#2ea043"/>
+  <circle cx="240" cy="230" r="8" fill="#58a6ff"/>
+  <circle cx="280" cy="230" r="8" fill="#ff6b6b"/>
+</svg>
+

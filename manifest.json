@@ -1,0 +1,25 @@
+{
+  "name": "TG Data Inspector",
+  "short_name": "TG Inspector",
+  "description": "Telegram Mini App - Complete Inspector for all Telegram WebApp API data",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#0d1117",
+  "theme_color": "#2ea043",
+  "orientation": "portrait",
+  "dir": "ltr",
+  "lang": "en",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "categories": [
+    "utilities",
+    "developer tools"
+  ]
+}
+

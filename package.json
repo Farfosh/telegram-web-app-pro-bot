@@ -1,0 +1,22 @@
+{
+  "name": "tg-data-inspector",
+  "version": "1.0.0",
+  "description": "Telegram Mini App - TG Data Inspector - Complete viewer for all Telegram WebApp API data",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx serve .",
+    "dev": "npx live-server --port=8080 --no-browser"
+  },
+  "keywords": [
+    "telegram",
+    "mini-app",
+    "webapp",
+    "inspector",
+    "telegram-bot"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {},
+  "dependencies": {}
+}
+

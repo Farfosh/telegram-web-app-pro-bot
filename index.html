@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="description" content="Telegram Mini App - Complete Inspector for all Telegram WebApp API data">
+    <meta name="theme-color" content="#2ea043">
+    <title>TG Data Inspector</title>
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- Icons -->
+    <link rel="icon" type="image/svg+xml" href="icon.svg">
+    <link rel="apple-touch-icon" href="icon.svg">
+    
+    <!-- Styles & Scripts -->
+    <link rel="stylesheet" href="style.css">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+<body>
+    <!-- Security Banner -->
+    <div class="security-banner" id="securityBanner">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path d="M10 0L3 3V9C3 13.55 6.84 17.74 10 18C13.16 17.74 17 13.55 17 9V3L10 0ZM10 9.5H15C14.76 12.91 12.22 15.87 10 16.45V10H5V4.3L10 2.19V9.5Z" fill="currentColor"/>
+        </svg>
+        <span>Security Note: initDataUnsafe is not trusted on the frontend. Any authentication/payment/privileges must be verified on the server via HMAC-SHA256 on initData before accepting any action.</span>
+    </div>
+
+    <!-- Main Container -->
+    <div class="container" id="mainContainer">
+        <!-- Tab Navigation -->
+        <nav class="tab-nav" id="tabNav">
+            <button class="tab-btn active" data-tab="overview">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    <path d="M10 0C4.48 0 0 4.48 0 10C0 15.52 4.48 20 10 20C15.52 20 20 15.52 20 10C20 4.48 15.52 0 10 0ZM10 3C11.66 3 13 4.34 13 6C13 7.66 11.66 9 10 9C8.34 9 7 7.66 7 6C7 4.34 8.34 3 10 3ZM10 17.2C7.5 17.2 5.29 15.92 4 13.98C4.03 11.99 8 10.9 10 10.9C11.99 10.9 15.97 11.99 16 13.98C14.71 15.92 12.5 17.2 10 17.2Z" fill="currentColor"/>
+                </svg>
+                <span>Overview</span>
+            </button>
+            <button class="tab-btn" data-tab="theme">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    <path d="M12 3C12 2.45 11.55 2 11 2H9C8.45 2 8 2.45 8 3V4H12V3ZM15 6H5C4.45 6 4 6.45 4 7V18C4 18.55 4.45 19 5 19H15C15.55 19 16 18.55 16 18V7C16 6.45 15.55 6 15 6Z" fill="currentColor"/>
+                </svg>
+                <span>Theme</span>
+            </button>
+            <button class="tab-btn" data-tab="viewport">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    <path d="M0 0V7H2V2H7V0H0ZM18 0V2H20V0H18ZM0 13V20H7V18H2V13H0ZM18 18V13H20V20H13V18H18Z" fill="currentColor"/>
+                </svg>
+                <span>Viewport</span>
+            </button>
+            <button class="tab-btn" data-tab="context">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    <path d="M10 0L0 4V9C0 14.55 3.84 19.74 10 20C16.16 19.74 20 14.55 20 9V4L10 0Z" fill="currentColor"/>
+                </svg>
+                <span>Context</span>
+            </button>
+            <button class="tab-btn" data-tab="buttons">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    <path d="M0 0H9V9H0V0ZM11 0H20V9H11V0ZM0 11H9V20H0V11ZM11 11H20V20H11V11Z" fill="currentColor"/>
+                </svg>
+                <span>Buttons</span>
+            </button>
+            <button class="tab-btn" data-tab="permissions">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    <path d="M10 0C4.48 0 0 4.48 0 10C0 15.52 4.48 20 10 20C15.52 20 20 15.52 20 10C20 4.48 15.52 0 10 0ZM8 15L3 10L4.41 8.59L8 12.17L15.59 4.58L17 6L8 15Z" fill="currentColor"/>
+                </svg>
+                <span>Permissions</span>
+            </button>
+            <button class="tab-btn" data-tab="storage">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    <path d="M10 0C4.48 0 0 2.24 0 5V15C0 17.76 4.48 20 10 20C15.52 20 20 17.76 20 15V5C20 2.24 15.52 0 10 0ZM10 3C13.87 3 17 4.34 17 6C17 7.66 13.87 9 10 9C6.13 9 3 7.66 3 6C3 4.34 6.13 3 10 3Z" fill="currentColor"/>
+                </svg>
+                <span>Storage</span>
+            </button>
+            <button class="tab-btn" data-tab="share">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    <path d="M15 14.08C14.24 14.08 13.56 14.38 13.04 14.85L7.91 11.7C7.96 11.47 8 11.24 8 11C8 10.76 7.96 10.53 7.91 10.3L12.96 7.19C13.5 7.69 14.21 8 15 8C16.66 8 18 6.66 18 5C18 3.34 16.66 2 15 2C13.34 2 12 3.34 12 5C12 5.24 12.04 5.47 12.09 5.7L7.04 8.81C6.5 8.31 5.79 8 5 8C3.34 8 2 9.34 2 11C2 12.66 3.34 14 5 14C5.79 14 6.5 13.69 7.04 13.19L12.16 16.35C12.11 16.56 12.08 16.78 12.08 17C12.08 18.61 13.39 19.92 15 19.92C16.61 19.92 17.92 18.61 17.92 17C17.92 15.39 16.61 14.08 15 14.08Z" fill="currentColor"/>
+                </svg>
+                <span>Share</span>
+            </button>
+            <button class="tab-btn" data-tab="debug">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    <path d="M10 0C4.48 0 0 4.48 0 10C0 15.52 4.48 20 10 20C15.52 20 20 15.52 20 10C20 4.48 15.52 0 10 0ZM10 15L5 10H8V5H12V10H15L10 15Z" fill="currentColor"/>
+                </svg>
+                <span>Debug</span>
+            </button>
+        </nav>
+
+        <!-- Tab Content -->
+        <div class="tab-content-wrapper">
+            <!-- Overview Tab -->
+            <div class="tab-content active" id="tab-overview">
+                <div class="card user-card" id="userCard">
+                    <div class="user-avatar" id="userAvatar"></div>
+                    <div class="user-info">
+                        <h2 id="userName">--</h2>
+                        <p class="username" id="userUsername">@--</p>
+                        <div class="user-badges">
+                            <span class="badge" id="langBadge">--</span>
+                            <span class="badge premium" id="premiumBadge" style="display:none;">Premium</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>App Info</h3>
+                    <div class="key-value-grid">
+                        <div class="kv-item">
+                            <span class="kv-key">Platform</span>
+                            <span class="kv-value" id="appPlatform">--</span>
+                        </div>
+                        <div class="kv-item">
+                            <span class="kv-key">Version</span>
+                            <span class="kv-value" id="appVersion">--</span>
+                        </div>
+                        <div class="kv-item">
+                            <span class="kv-key">Color Scheme</span>
+                            <span class="kv-value" id="appColorScheme">--</span>
+                        </div>
+                        <div class="kv-item">
+                            <span class="kv-key">Is Expanded</span>
+                            <span class="kv-value" id="appIsExpanded">--</span>
+                        </div>
+                        <div class="kv-item">
+                            <span class="kv-key">Is Fullscreen</span>
+                            <span class="kv-value" id="appIsFullscreen">--</span>
+                        </div>
+                        <div class="kv-item">
+                            <span class="kv-key">Launch Source</span>
+                            <span class="kv-value badge-inline" id="appLaunchSource">--</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>Quick Actions</h3>
+                    <div class="action-buttons">
+                        <button class="btn btn-primary" id="btnExpand">Expand</button>
+                        <button class="btn btn-primary" id="btnReady">Ready</button>
+                        <button class="btn btn-primary" id="btnToggleFullscreen">Toggle Fullscreen</button>
+                        <button class="btn btn-secondary" id="btnHideKeyboard">Hide Keyboard</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>initData (Raw)</h3>
+                    <div class="json-viewer">
+                        <pre id="initDataRaw">--</pre>
+                    </div>
+                    <button class="btn btn-secondary btn-copy" data-copy="initDataRaw">Copy</button>
+                </div>
+
+                <div class="card">
+                    <h3>initDataUnsafe (Parsed)</h3>
+                    <div class="json-viewer">
+                        <pre id="initDataUnsafe">--</pre>
+                    </div>
+                    <button class="btn btn-secondary btn-copy" data-copy="initDataUnsafe">Copy</button>
+                </div>
+            </div>
+
+            <!-- Theme Tab -->
+            <div class="tab-content" id="tab-theme">
+                <div class="card">
+                    <h3>Theme Parameters</h3>
+                    <div class="color-swatches" id="colorSwatches">
+                        <!-- Will be populated dynamically -->
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>Theme Actions</h3>
+                    <div class="action-buttons">
+                        <button class="btn btn-primary" id="btnSetHeaderColor">Set Header Color</button>
+                        <button class="btn btn-primary" id="btnSetBgColor">Set Background Color</button>
+                        <button class="btn btn-primary" id="btnSetBottomBarColor">Set Bottom Bar Color</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>CSS Variables</h3>
+                    <div class="json-viewer">
+                        <pre id="cssVars">--</pre>
+                    </div>
+                    <button class="btn btn-secondary btn-copy" data-copy="cssVars">Copy CSS</button>
+                </div>
+            </div>
+
+            <!-- Viewport Tab -->
+            <div class="tab-content" id="tab-viewport">
+                <div class="card">
+                    <h3>Viewport Info</h3>
+                    <div class="key-value-grid">
+                        <div class="kv-item">
+                            <span class="kv-key">Height</span>
+                            <span class="kv-value" id="vpHeight">--</span>
+                        </div>
+                        <div class="kv-item">
+                            <span class="kv-key">Stable Height</span>
+                            <span class="kv-value" id="vpStableHeight">--</span>
+                        </div>
+                        <div class="kv-item">
+                            <span class="kv-key">Is Stable</span>
+                            <span class="kv-value" id="vpIsStable">--</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>Safe Area Insets</h3>
+                    <div class="safe-area-display" id="safeAreaDisplay">
+                        <div class="safe-area-overlay">
+                            <div class="safe-inset top" id="safeTop">
+                                <span id="safeTopValue">0</span>
+                            </div>
+                            <div class="safe-inset right" id="safeRight">
+                                <span id="safeRightValue">0</span>
+                            </div>
+                            <div class="safe-inset bottom" id="safeBottom">
+                                <span id="safeBottomValue">0</span>
+                            </div>
+                            <div class="safe-inset left" id="safeLeft">
+                                <span id="safeLeftValue">0</span>
+                            </div>
+                            <div class="safe-area-content">Safe Area</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>Content Safe Area Insets</h3>
+                    <div class="key-value-grid">
+                        <div class="kv-item">
+                            <span class="kv-key">Top</span>
+                            <span class="kv-value" id="csaTop">--</span>
+                        </div>
+                        <div class="kv-item">
+                            <span class="kv-key">Right</span>
+                            <span class="kv-value" id="csaRight">--</span>
+                        </div>
+                        <div class="kv-item">
+                            <span class="kv-key">Bottom</span>
+                            <span class="kv-value" id="csaBottom">--</span>
+                        </div>
+                        <div class="kv-item">
+                            <span class="kv-key">Left</span>
+                            <span class="kv-value" id="csaLeft">--</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>Simulate</h3>
+                    <button class="btn btn-primary" id="btnSimViewport">Simulate Viewport Change</button>
+                </div>
+            </div>
+
+            <!-- Context Tab -->
+            <div class="tab-content" id="tab-context">
+                <div class="card">
+                    <h3>Launch Parameters</h3>
+                    <div class="key-value-grid">
+                        <div class="kv-item">
+                            <span class="kv-key">start_param</span>
+                            <span class="kv-value" id="ctxStartParam">--</span>
+                        </div>
+                        <div class="kv-item">
+                            <span class="kv-key">query_id</span>
+                            <span class="kv-value" id="ctxQueryId">--</span>
+                        </div>
+                        <div class="kv-item">
+                            <span class="kv-key">can_send_after</span>
+                            <span class="kv-value" id="ctxCanSendAfter">--</span>
+                        </div>
+                        <div class="kv-item">
+                            <span class="kv-key">auth_date</span>
+                            <span class="kv-value" id="ctxAuthDate">--</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card" id="chatInfoCard">
+                    <h3>Chat Info</h3>
+                    <div class="key-value-grid">
+                        <div class="kv-item">
+                            <span class="kv-key">Type</span>
+                            <span class="kv-value" id="chatType">--</span>
+                        </div>
+                        <div class="kv-item">
+                            <span class="kv-key">Title</span>
+                            <span class="kv-value" id="chatTitle">--</span>
+                        </div>
+                        <div class="kv-item">
+                            <span class="kv-key">ID</span>
+                            <span class="kv-value" id="chatId">--</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>Context Actions</h3>
+                    <div class="action-buttons">
+                        <button class="btn btn-primary" id="btnSendData">Send Data (Keyboard)</button>
+                        <button class="btn btn-primary" id="btnSwitchInline">Switch Inline Query</button>
+                        <button class="btn btn-secondary" id="btnOpenLink">Open Link</button>
+                        <button class="btn btn-secondary" id="btnOpenTgLink">Open Telegram Link</button>
+                        <button class="btn btn-secondary" id="btnOpenInvoice">Open Invoice</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Buttons Tab -->
+            <div class="tab-content" id="tab-buttons">
+                <div class="card">
+                    <h3>Main Button</h3>
+                    <div class="button-controls">
+                        <input type="text" class="input" id="mainBtnText" placeholder="Button text">
+                        <input type="color" class="input-color" id="mainBtnColor" title="Button color">
+                        <input type="color" class="input-color" id="mainBtnTextColor" title="Text color">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="mainBtnVisible">
+                            <span>Visible</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="mainBtnEnabled">
+                            <span>Enabled</span>
+                        </label>
+                        <button class="btn btn-primary" id="btnApplyMain">Apply</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>Secondary Button</h3>
+                    <div class="button-controls">
+                        <input type="text" class="input" id="secBtnText" placeholder="Button text">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="secBtnVisible">
+                            <span>Visible</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="secBtnEnabled">
+                            <span>Enabled</span>
+                        </label>
+                        <button class="btn btn-primary" id="btnApplySec">Apply</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>Other Buttons</h3>
+                    <div class="action-buttons">
+                        <button class="btn btn-primary" id="btnToggleBack">Toggle Back Button</button>
+                        <button class="btn btn-primary" id="btnToggleSettings">Toggle Settings Button</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>Haptic Feedback</h3>
+                    <div class="action-buttons">
+                        <button class="btn btn-secondary" id="btnHapticImpact">Impact (medium)</button>
+                        <button class="btn btn-secondary" id="btnHapticNotify">Notification (success)</button>
+                        <button class="btn btn-secondary" id="btnHapticSelect">Selection Changed</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>Button Events</h3>
+                    <div class="event-list" id="buttonEventList">
+                        <p class="text-muted">No events yet</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Permissions Tab -->
+            <div class="tab-content" id="tab-permissions">
+                <div class="card">
+                    <h3>Access Permissions</h3>
+                    <div class="key-value-grid">
+                        <div class="kv-item">
+                            <span class="kv-key">Write Access</span>
+                            <span class="kv-value badge-inline" id="permWrite">--</span>
+                        </div>
+                        <div class="kv-item">
+                            <span class="kv-key">Contact</span>
+                            <span class="kv-value badge-inline" id="permContact">--</span>
+                        </div>
+                        <div class="kv-item">
+                            <span class="kv-key">Emoji Status</span>
+                            <span class="kv-value badge-inline" id="permEmoji">--</span>
+                        </div>
+                        <div class="kv-item">
+                            <span class="kv-key">Biometric</span>
+                            <span class="kv-value badge-inline" id="permBiometric">--</span>
+                        </div>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="btn btn-primary" id="btnReqWrite">Request Write Access</button>
+                        <button class="btn btn-primary" id="btnReqContact">Request Contact</button>
+                        <button class="btn btn-primary" id="btnReqEmoji">Request Emoji Status</button>
+                        <button class="btn btn-primary" id="btnSetEmoji">Set Emoji Status</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>Biometric Manager</h3>
+                    <div class="key-value-grid">
+                        <div class="kv-item">
+                            <span class="kv-key">Available</span>
+                            <span class="kv-value badge-inline" id="bioAvailable">--</span>
+                        </div>
+                        <div class="kv-item">
+                            <span class="kv-key">Access Granted</span>
+                            <span class="kv-value badge-inline" id="bioAccessGranted">--</span>
+                        </div>
+                        <div class="kv-item">
+                            <span class="kv-key">Type</span>
+                            <span class="kv-value" id="bioType">--</span>
+                        </div>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="btn btn-primary" id="btnBiometricCheck">Check Status</button>
+                        <button class="btn btn-primary" id="btnBiometricAuth">Authenticate</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>Location Manager</h3>
+                    <div class="key-value-grid">
+                        <div class="kv-item">
+                            <span class="kv-key">Status</span>
+                            <span class="kv-value badge-inline" id="locStatus">--</span>
+                        </div>
+                        <div class="kv-item">
+                            <span class="kv-key">Last Position</span>
+                            <span class="kv-value" id="locLast">--</span>
+                        </div>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="btn btn-primary" id="btnLocStart">Start Location</button>
+                        <button class="btn btn-secondary" id="btnLocStop">Stop Location</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>Sensors</h3>
+                    <div class="sensor-panel">
+                        <div class="sensor-group">
+                            <h4>Accelerometer</h4>
+                            <div class="sensor-values">
+                                <span>X: <strong id="accelX">0.00</strong></span>
+                                <span>Y: <strong id="accelY">0.00</strong></span>
+                                <span>Z: <strong id="accelZ">0.00</strong></span>
+                            </div>
+                            <button class="btn btn-sm" id="btnAccelToggle">Start</button>
+                        </div>
+                        <div class="sensor-group">
+                            <h4>Gyroscope</h4>
+                            <div class="sensor-values">
+                                <span>α: <strong id="gyroAlpha">0.00</strong></span>
+                                <span>β: <strong id="gyroBeta">0.00</strong></span>
+                                <span>γ: <strong id="gyroGamma">0.00</strong></span>
+                            </div>
+                            <button class="btn btn-sm" id="btnGyroToggle">Start</button>
+                        </div>
+                        <div class="sensor-group">
+                            <h4>Device Orientation</h4>
+                            <div class="sensor-values">
+                                <span>Type: <strong id="orientType">--</strong></span>
+                                <span>Locked: <strong id="orientLocked">--</strong></span>
+                            </div>
+                            <button class="btn btn-sm" id="btnOrientLock">Toggle Lock</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Storage Tab -->
+            <div class="tab-content" id="tab-storage">
+                <div class="card">
+                    <h3>Cloud Storage</h3>
+                    <p class="text-muted" style="margin-bottom: 12px;">Store data in Telegram cloud. Click "Load All Keys" to see existing data.</p>
+                    <div class="storage-playground">
+                        <div class="storage-controls">
+                            <input type="text" class="input" id="cloudKey" placeholder="Key">
+                            <input type="text" class="input" id="cloudValue" placeholder="Value">
+                            <div class="action-buttons">
+                                <button class="btn btn-primary" id="btnCloudSet">Set</button>
+                                <button class="btn btn-secondary" id="btnCloudGet">Get</button>
+                                <button class="btn btn-danger" id="btnCloudRemove">Remove</button>
+                                <button class="btn btn-secondary" id="btnCloudGetKeys">Load All Keys</button>
+                            </div>
+                        </div>
+                        <div class="storage-list" id="cloudList">
+                            <!-- Will be populated -->
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="card">
+                    <h3>Secure Storage</h3>
+                    <p class="text-muted" style="margin-bottom: 12px;">Encrypted storage for sensitive data. Values are encrypted by Telegram.</p>
+                    <div class="storage-playground">
+                        <div class="storage-controls">
+                            <input type="text" class="input" id="secureKey" placeholder="Key">
+                            <input type="password" class="input" id="secureValue" placeholder="Value">
+                            <div class="action-buttons">
+                                <button class="btn btn-primary" id="btnSecureSet">Set</button>
+                                <button class="btn btn-secondary" id="btnSecureGet">Get</button>
+                                <button class="btn btn-danger" id="btnSecureRemove">Remove</button>
+                            </div>
+                        </div>
+                        <div class="storage-list" id="secureList">
+                            <!-- Will be populated -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Share Tab -->
+            <div class="tab-content" id="tab-share">
+                <div class="card">
+                    <h3>Share to Story</h3>
+                    <div class="share-controls">
+                        <input type="text" class="input" id="storyMediaUrl" placeholder="Media URL">
+                        <input type="text" class="input" id="storyCaption" placeholder="Caption">
+                        <button class="btn btn-primary" id="btnShareStory">Share to Story</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>Share Message</h3>
+                    <div class="share-controls">
+                        <input type="text" class="input" id="shareMsg" placeholder="Prepared inline message ID">
+                        <button class="btn btn-primary" id="btnShareMsg">Share Message</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>Invoice</h3>
+                    <div class="share-controls">
+                        <input type="text" class="input" id="invoiceUrl" placeholder="Invoice URL">
+                        <button class="btn btn-primary" id="btnInvoice">Open Invoice</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>Share Events</h3>
+                    <div class="event-list" id="shareEventList">
+                        <p class="text-muted">No events yet</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Debug Tab -->
+            <div class="tab-content" id="tab-debug">
+                <div class="card">
+                    <h3>Dialog Actions</h3>
+                    <div class="action-buttons">
+                        <button class="btn btn-primary" id="btnShowPopup">Show Popup</button>
+                        <button class="btn btn-primary" id="btnShowAlert">Show Alert</button>
+                        <button class="btn btn-primary" id="btnShowConfirm">Show Confirm</button>
+                        <button class="btn btn-secondary" id="btnScanQr">Scan QR</button>
+                        <button class="btn btn-secondary" id="btnCloseQr">Close QR Scanner</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>System Actions</h3>
+                    <div class="action-buttons">
+                        <button class="btn btn-primary" id="btnReadClipboard">Read Clipboard</button>
+                        <button class="btn btn-primary" id="btnAddHome">Add to Home Screen</button>
+                        <button class="btn btn-secondary" id="btnCheckHome">Check Home Screen Status</button>
+                    </div>
+                    <div class="key-value-grid">
+                        <div class="kv-item">
+                            <span class="kv-key">Home Screen Status</span>
+                            <span class="kv-value badge-inline" id="homeStatus">--</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>Event Stream</h3>
+                    <div class="event-stream" id="eventStream">
+                        <!-- Events will be logged here -->
+                    </div>
+                    <button class="btn btn-secondary" id="btnClearEvents">Clear Events</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
+
